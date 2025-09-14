@@ -1,0 +1,66 @@
+# =============================
+# OS / IDE
+# =============================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Mac
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# =============================
+# Go
+# =============================
+# бинарники
+/bin/
+/out/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# временные файлы
+*.log
+*.tmp
+*.swp
+
+# Go modules cache
+/pkg/mod/
+
+# =============================
+# Node / frontend
+# =============================
+node_modules/
+dist/
+build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =============================
+# Docker
+# =============================
+# Docker Compose volumes
+docker-compose.override.yml
+**/volumes/
+
+# =============================
+# Environment files
+# =============================
+.env
+.env.local
+.env.*.local
+
+# =============================
+# Misc
+# =============================
+coverage.out
