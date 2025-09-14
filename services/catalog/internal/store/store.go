@@ -32,7 +32,7 @@ func NewStore() (*Store, error) {
 }
 
 func (s *Store) GetProducts(ctx context.Context) ([]model.Product, error) {
-	rows, err := s.db.Query(ctx, "SELECT id, name, sku, price, qty_available, created_at FROM products;")
+	rows, err := s.db.Query(ctx, "SELECT id, name, sku, price, qty_available, created_at FROM products")
 	if err != nil {
 		return nil, err 
 	}

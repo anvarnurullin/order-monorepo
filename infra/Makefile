@@ -7,9 +7,9 @@
 up:
 	docker-compose up -d
 
-# Остановить и удалить контейнеры + тома
+# Остановить и удалить контейнеры
 down:
-	docker-compose down -v
+	docker-compose down
 
 # Смотреть логи всех контейнеров
 logs:

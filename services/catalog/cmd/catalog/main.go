@@ -8,9 +8,11 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	_ = godotenv.Load("../../.env")
 	port := os.Getenv("CATALOG_HTTP_PORT")
 	if port == "" {
 		port = "8082"
@@ -24,8 +26,7 @@ func main() {
 	h := handler.NewHandler(s)
 
 	r := chi.NewRouter()
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"status": "ok"}`))
 		fmt.Println("Health endpoint checked")
