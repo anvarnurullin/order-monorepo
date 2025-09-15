@@ -32,6 +32,9 @@ func main() {
 		fmt.Println("Health endpoint checked")
 	})
 	r.Get("/api/v1/products", h.GetProducts)
+	r.Get("/api/v1/products/{id}", h.GetProduct)
+
+	r.Patch("/api/v1/products/{id}/decrease", h.DecreaseProductQty)
 
 	addr := fmt.Sprintf(":%s", port)
 	fmt.Println("Starting catalog service on port", port)
