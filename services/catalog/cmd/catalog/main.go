@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"order-monorepo/services/catalog/internal/handler"
+	"order-monorepo/services/catalog/internal/logger"
 	"order-monorepo/services/catalog/internal/store"
 	"os"
 
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	logger.Init()
+
 	_ = godotenv.Load("../../.env")
 	port := os.Getenv("CATALOG_HTTP_PORT")
 	if port == "" {
@@ -29,7 +32,7 @@ func main() {
 	r.Get("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"status": "ok"}`))
-		fmt.Println("Health endpoint checked")
+		logger.Info("Health endpoint checked")
 	})
 	r.Get("/api/v1/products", h.GetProducts)
 	r.Get("/api/v1/products/{id}", h.GetProduct)
@@ -37,8 +40,8 @@ func main() {
 	r.Patch("/api/v1/products/{id}/decrease", h.DecreaseProductQty)
 
 	addr := fmt.Sprintf(":%s", port)
-	fmt.Println("Starting catalog service on port", port)
+	logger.Infof("Starting catalog service on port %s", port)
 	if err := http.ListenAndServe(addr, r); r != nil {
-		fmt.Println("failed to start server: ", err)
+		logger.Error("failed to start server: ", err)
 	}
 }
