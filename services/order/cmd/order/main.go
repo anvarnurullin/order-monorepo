@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"order-monorepo/services/order/internal/catalog"
+	"order-monorepo/services/order/internal/config"
 	"order-monorepo/services/order/internal/handler"
 	"order-monorepo/services/order/internal/logger"
 	"order-monorepo/services/order/internal/store"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -17,27 +17,14 @@ func main() {
 	logger.Init()
 
 	_ = godotenv.Load("../../.env")
-	port := os.Getenv("ORDER_HTTP_PORT")
-	if port == "" {
-		port = "8083"
-	}
+	cfg := config.Load()
 
-	s, err := store.NewStore()
+	s, err := store.NewStore(cfg.DBURL)
 	if err != nil {
 		panic(fmt.Errorf("failed to init store: %w", err))
 	}
 
-	catalogURL := os.Getenv("CATALOG_URL")
-	if catalogURL == "" {
-		catalogURL = "localhost"
-	}
-
-	catalogPort := os.Getenv("CATALOG_PORT")
-	if catalogPort == "" {
-		catalogPort = "8082"
-	}
-
-	c := catalog.NewClient("http://" + catalogURL + ":" + catalogPort)
+	c := catalog.NewClient("http://" + cfg.CatalogURL + ":" + cfg.CatalogPort)
 
 	h := handler.NewHandler(s, c)
 
@@ -54,8 +41,8 @@ func main() {
 
 	r.Patch("/api/v1/orders/{id}/status", h.UpdateOrderStatus)
 
-	addr := fmt.Sprintf(":%s", port)
-	logger.Info("Starting catalog service on port" + port)
+	addr := fmt.Sprintf(":%s", cfg.HTTPPort)
+	logger.Info("Starting catalog service on port" + cfg.HTTPPort)
 	if err := http.ListenAndServe(addr, r); err != nil {
 		panic(err)
 	}

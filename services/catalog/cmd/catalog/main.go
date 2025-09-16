@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"order-monorepo/services/catalog/internal/config"
 	"order-monorepo/services/catalog/internal/handler"
 	"order-monorepo/services/catalog/internal/logger"
 	"order-monorepo/services/catalog/internal/store"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -16,12 +16,9 @@ func main() {
 	logger.Init()
 
 	_ = godotenv.Load("../../.env")
-	port := os.Getenv("CATALOG_HTTP_PORT")
-	if port == "" {
-		port = "8082"
-	}
+	cfg := config.Load()
 
-	s, err := store.NewStore()
+	s, err := store.NewStore(cfg.DBURL)
 	if err != nil {
 		panic(fmt.Errorf("failed to init store: %w", err))
 	}
@@ -39,8 +36,8 @@ func main() {
 
 	r.Patch("/api/v1/products/{id}/decrease", h.DecreaseProductQty)
 
-	addr := fmt.Sprintf(":%s", port)
-	logger.Infof("Starting catalog service on port %s", port)
+	addr := fmt.Sprintf(":%s", cfg.HTTPPort)
+	logger.Infof("Starting catalog service on port %s", cfg.HTTPPort)
 	if err := http.ListenAndServe(addr, r); r != nil {
 		logger.Error("failed to start server: ", err)
 	}

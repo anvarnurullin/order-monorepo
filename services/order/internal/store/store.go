@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"order-monorepo/services/order/internal/catalog"
 	"order-monorepo/services/order/internal/model"
-	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -15,12 +14,7 @@ type Store struct {
 	db *pgxpool.Pool
 }
 
-func NewStore() (*Store, error) {
-	dsn := os.Getenv("DATABASE_URL")
-	if dsn == "" {
-		dsn = "postgres://app:app@postgres:5433/app?sslmode=disable"
-	}
-
+func NewStore(dsn string) (*Store, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
