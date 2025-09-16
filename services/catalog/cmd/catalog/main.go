@@ -9,13 +9,11 @@ import (
 	"order-monorepo/services/catalog/internal/store"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 )
 
 func main() {
 	logger.Init()
 
-	_ = godotenv.Load("../../.env")
 	cfg := config.Load()
 
 	s, err := store.NewStore(cfg.DBURL)

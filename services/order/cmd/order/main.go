@@ -10,13 +10,11 @@ import (
 	"order-monorepo/services/order/internal/store"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 )
 
 func main() {
 	logger.Init()
 
-	_ = godotenv.Load("../../.env")
 	cfg := config.Load()
 
 	s, err := store.NewStore(cfg.DBURL)
@@ -24,7 +22,7 @@ func main() {
 		panic(fmt.Errorf("failed to init store: %w", err))
 	}
 
-	c := catalog.NewClient("http://" + cfg.CatalogURL + ":" + cfg.CatalogPort)
+	c := catalog.NewClient(cfg.CatalogURL)
 
 	h := handler.NewHandler(s, c)
 

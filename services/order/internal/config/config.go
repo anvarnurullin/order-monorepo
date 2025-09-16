@@ -14,7 +14,7 @@ type Config struct {
 func Load() *Config {
 	cfg := &Config{}
 
-	cfg.HTTPPort = getEnv("ORDER_HTTP_PORT", "8083")
+	cfg.HTTPPort = getEnv("ORDER_PORT", "8083")
 	cfg.DBURL = getEnv("DATABASE_URL", "postgres://app:app@localhost:5433/app?sslmode=disable")
 	cfg.CatalogURL = getEnv("CATALOG_URL", "localhost")
 	cfg.CatalogPort = getEnv("CATALOG_PORT", "8082")
