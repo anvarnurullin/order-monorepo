@@ -13,9 +13,9 @@ export const ProductList: React.FC = () => {
     <div>
       <h2>Products</h2>
       <ul>
-        {products.map((p) => (
+        {products.sort((a, b) => a.id - b.id ).map((p) => (
           <li key={p.id}>
-            {p.name} (SKU: {p.sku}) - ${p.price} - Qty: {p.qtyAvailable}
+            {p.id} - {p.name} (SKU: {p.sku}) - ${p.price} - Qty: {p.qtyAvailable}
           </li>
         ))}
       </ul>
