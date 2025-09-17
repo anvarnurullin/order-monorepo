@@ -6,6 +6,7 @@ import (
 	"order-monorepo/services/order/internal/catalog"
 	"order-monorepo/services/order/internal/config"
 	"order-monorepo/services/order/internal/handler"
+	"order-monorepo/services/order/internal/kafka"
 	"order-monorepo/services/order/internal/logger"
 	"order-monorepo/services/order/internal/store"
 
@@ -24,7 +25,10 @@ func main() {
 
 	c := catalog.NewClient(cfg.CatalogURL)
 
-	h := handler.NewHandler(s, c)
+	kafkaProducer := kafka.NewProducer(cfg.KafkaBroker, cfg.KafkaTopic)
+	defer kafkaProducer.Close()
+
+	h := handler.NewHandler(s, c, kafkaProducer)
 
 	r := chi.NewRouter()
 

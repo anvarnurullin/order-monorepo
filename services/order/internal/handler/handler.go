@@ -2,8 +2,11 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"order-monorepo/services/order/internal/catalog"
+	"order-monorepo/services/order/internal/kafka"
+	"order-monorepo/services/order/internal/logger"
 	"order-monorepo/services/order/internal/model"
 	"order-monorepo/services/order/internal/store"
 	"strconv"
@@ -15,12 +18,14 @@ import (
 type Handler struct {
 	store 			*store.Store
 	catalogClient 	*catalog.Client
+	kafkaProducer   *kafka.Producer
 }
 
-func NewHandler(s *store.Store, c *catalog.Client) *Handler {
+func NewHandler(s *store.Store, c *catalog.Client, k *kafka.Producer) *Handler {
 	return &Handler{
 		store: 			s,
 		catalogClient: 	c,
+		kafkaProducer:  k,
 	}
 }
 
@@ -40,6 +45,15 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	o.ID = id
 	o.Status = "pending"
 	o.CreatedAt = time.Now()
+
+	if err := h.kafkaProducer.SendMessage(
+		"order",
+		fmt.Sprintf(`{"id":%d,"product_id":%d,"quantity":%d}`,
+		o.ID, o.ProductID, o.Quantity));
+		err != nil {
+			logger.Error("failed to send kafka message", err)
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(o)
 }

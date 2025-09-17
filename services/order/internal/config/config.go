@@ -9,6 +9,8 @@ type Config struct {
 	DBURL       string
 	CatalogURL  string
 	CatalogPort string
+	KafkaBroker string
+	KafkaTopic  string
 }
 
 func Load() *Config {
@@ -18,6 +20,8 @@ func Load() *Config {
 	cfg.DBURL = getEnv("DATABASE_URL", "postgres://app:app@localhost:5432/app?sslmode=disable")
 	cfg.CatalogURL = getEnv("CATALOG_URL", "localhost")
 	cfg.CatalogPort = getEnv("CATALOG_PORT", "8082")
+	cfg.KafkaBroker = getEnv("KAFKA_BROKER", "kafka:9092")
+	cfg.KafkaTopic = getEnv("KAFKA_TOPIC", "orders")
 
 	return cfg
 }
