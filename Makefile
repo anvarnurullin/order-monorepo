@@ -31,12 +31,12 @@ logs:
 migrate-up:
 	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0001_create_products.up.sql
 	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0002_create_orders.up.sql
-	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0003_add_product_image.up.sql
+	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0003_create_users.up.sql
 	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/seed_products.sql
 	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/seed_orders.sql
 
 # Откатить миграции
 migrate-down:
-	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0003_add_product_image.down.sql
+	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0003_create_users.down.sql
 	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0002_create_orders.down.sql
 	docker-compose exec postgres psql -U app -d app -f /docker-entrypoint-initdb.d/0001_create_products.down.sql

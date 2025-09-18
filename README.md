@@ -33,11 +33,51 @@ make down
 - **Frontend**: http://localhost
 - **Catalog API**: http://localhost/api/v1/products
 - **Order API**: http://localhost/api/v1/orders
+- **Auth API**: http://localhost/api/v1/auth
 
 ## Структура проекта
 
 - `services/catalog/` - Сервис каталога товаров
 - `services/order/` - Сервис заказов
+- `services/auth/` - Сервис авторизации с JWT
 - `frontend/` - React фронтенд
 - `migrations/` - SQL миграции
 - `docker-compose.yml` - Конфигурация контейнеров
+
+## API Авторизации
+
+### Регистрация пользователя
+```bash
+POST /api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+### Вход в систему
+```bash
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+### Проверка токена
+```bash
+GET /api/v1/auth/validate
+Authorization: Bearer <jwt_token>
+```
+
+## Локальная разработка
+
+Для запуска сервиса авторизации локально:
+
+```bash
+make run-auth-local
+```
