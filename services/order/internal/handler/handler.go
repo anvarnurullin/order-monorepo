@@ -86,9 +86,30 @@ func (h *Handler) UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	order, err := h.store.GetOrderByID(r.Context(), orderID)
+	if err != nil {
+		http.Error(w, "order not found", http.StatusNotFound)
+	}
+
+	if !model.IsValidStatusTransition(order.Status, req.Status) {
+		http.Error(w, fmt.Sprintf("invalid status transition: %s -> %s", order.Status, req.Status), http.StatusBadRequest)
+	}
+
 	if err := h.store.UpdateOrderStatus(r.Context(), orderID, req.Status); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	event := fmt.Sprintf(`{
+		"event": "order_status_updated",
+		"order_id": %d,
+		"old_status": "%s",
+		"new_status": "%s",
+		"updated_at": "%s"
+	}`, order.ID, order.Status, req.Status, time.Now().Format(time.RFC3339))
+
+	if err := h.kafkaProducer.SendMessage("order", event); err != nil {
+		logger.Error("failed to send kafka message", err)
 	}
 
 	w.WriteHeader(http.StatusNoContent)

@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"order-monorepo/services/catalog/internal/config"
 	"order-monorepo/services/catalog/internal/handler"
 	"order-monorepo/services/catalog/internal/logger"
+	"order-monorepo/services/catalog/internal/minio"
 	"order-monorepo/services/catalog/internal/store"
 
 	"github.com/go-chi/chi/v5"
@@ -21,7 +23,16 @@ func main() {
 		panic(fmt.Errorf("failed to init store: %w", err))
 	}
 
-	h := handler.NewHandler(s)
+	minioClient, err := minio.NewClient(cfg.MinioEndpoint, cfg.MinioAccessKey, cfg.MinioSecretKey, cfg.MinioBucket)
+	if err != nil {
+		panic(fmt.Errorf("failed to init minio client: %w", err))
+	}
+
+	if err := minioClient.InitBucket(context.Background()); err != nil {
+		panic(fmt.Errorf("failed to init minio bucket: %w", err))
+	}
+
+	h := handler.NewHandler(s, minioClient)
 
 	r := chi.NewRouter()
 	r.Get("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +42,8 @@ func main() {
 	})
 	r.Get("/api/v1/products", h.GetProducts)
 	r.Get("/api/v1/products/{id}", h.GetProduct)
+	r.Post("/api/v1/products/{id}/image", h.UploadProductImage)
+	r.Get("/api/v1/images/*", h.GetProductImage)
 
 	r.Patch("/api/v1/products/{id}/decrease", h.DecreaseProductQty)
 

@@ -4,5 +4,6 @@ export interface Product {
   sku: string;
   price: number;
   qtyAvailable: number;
+  imageUrl?: string;
   createdAt: string;
 }

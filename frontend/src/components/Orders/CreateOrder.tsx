@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createOrder as apiCreateOrder } from "../api/orders";
+import "./CreateOrder.scss";
 
 interface CreateOrderProps {
   onOrderCreated?: () => void;
@@ -20,13 +21,10 @@ export default function CreateOrder({ onOrderCreated }: CreateOrderProps) {
     try {
       await apiCreateOrder(productId, quantity);
 
-      // Clear form
       setProductId(null);
       setQuantity(null);
 
-      // Trigger refresh of parent components
       onOrderCreated?.();
-
     } catch (err) {
       console.error(err);
     } finally {
@@ -35,9 +33,9 @@ export default function CreateOrder({ onOrderCreated }: CreateOrderProps) {
   };
 
   return (
-    <div className="p-4 border rounded-md shadow">
-      <h2 className="text-xl font-bold mb-2">Создать заказ</h2>
-      <div className="flex gap-2 mb-2">
+    <div className="create-order">
+      <h2 className="create-order__title">Создать заказ</h2>
+      <div className="create-order__form">
         <input
           type="number"
           value={productId || ""}
@@ -45,7 +43,7 @@ export default function CreateOrder({ onOrderCreated }: CreateOrderProps) {
             setProductId(e.target.value ? Number(e.target.value) : null)
           }
           placeholder="Product ID"
-          className="border p-1"
+          className="create-order__input"
           disabled={isLoading}
         />
         <input
@@ -55,13 +53,13 @@ export default function CreateOrder({ onOrderCreated }: CreateOrderProps) {
             setQuantity(e.target.value ? Number(e.target.value) : null)
           }
           placeholder="Quantity"
-          className="border p-1"
+          className="create-order__input"
           disabled={isLoading}
         />
         <button
           onClick={createOrder}
           disabled={isLoading}
-          className="bg-blue-500 text-white px-3 py-1 rounded disabled:bg-gray-400"
+          className="create-order__button"
         >
           {isLoading ? "Создание..." : "Создать"}
         </button>

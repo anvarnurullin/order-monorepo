@@ -9,6 +9,7 @@ export async function fetchProducts(): Promise<Product[]> {
     sku: p.sku,
     price: p.price,
     qtyAvailable: p.qty_available,
+    imageUrl: p.image_url,
     createdAt: p.created_at,
   }));
 }

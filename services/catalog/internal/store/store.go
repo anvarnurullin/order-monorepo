@@ -26,7 +26,7 @@ func NewStore(dsn string) (*Store, error) {
 }
 
 func (s *Store) GetProducts(ctx context.Context) ([]model.Product, error) {
-	rows, err := s.db.Query(ctx, "SELECT id, name, sku, price, qty_available, created_at FROM products")
+	rows, err := s.db.Query(ctx, "SELECT id, name, sku, price, qty_available, image_url, created_at FROM products")
 	if err != nil {
 		return nil, err 
 	}
@@ -35,7 +35,7 @@ func (s *Store) GetProducts(ctx context.Context) ([]model.Product, error) {
 	var products []model.Product
 	for rows.Next() {
 		var p model.Product
-		if err := rows.Scan(&p.ID, &p.Name, &p.SKU, &p.Price, &p.QtyAvailable, &p.CreatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Name, &p.SKU, &p.Price, &p.QtyAvailable, &p.ImageURL, &p.CreatedAt); err != nil {
 			return nil, err
 		}
 		products = append(products, p)
@@ -48,10 +48,10 @@ func (s *Store) GetProductByID(ctx context.Context, id int) (*model.Product, err
 	var p model.Product
 	err := s.db.QueryRow(
 		ctx,
-		`SELECT id, name, sku, price, qty_available, created_at
+		`SELECT id, name, sku, price, qty_available, image_url, created_at
 		FROM products
 		WHERE id=$1
-		`, id).Scan(&p.ID, &p.Name, &p.SKU, &p.Price, &p.QtyAvailable, &p.CreatedAt)
+		`, id).Scan(&p.ID, &p.Name, &p.SKU, &p.Price, &p.QtyAvailable, &p.ImageURL, &p.CreatedAt)
 
 	if err != nil {
 		return nil, err
@@ -68,5 +68,12 @@ func (s *Store) DecreaseProductQty(ctx context.Context, id int, qty int) error {
 		WHERE id=$1 AND qty_available >= $2`,
 		id, qty)
 
+	return err
+}
+func (s *Store) UpdateProductImage(ctx context.Context, id int, imageURL string) error {
+	_, err := s.db.Exec(
+		ctx,
+		`UPDATE products SET image_url = $2 WHERE id = $1`,
+		id, imageURL)
 	return err
 }

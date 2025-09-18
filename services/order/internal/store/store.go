@@ -95,3 +95,18 @@ func (s *Store) CreateOrderWithStockCheck(ctx context.Context, o model.Order, ca
 
 	return id, nil
 }
+
+func (s *Store) GetOrderByID(ctx context.Context, id int64) (*model.Order, error) {
+	row := s.db.QueryRow(ctx, `
+	SELECT id, product_id, quantity, status, created_at
+	FROM orders
+	WHERE id = $1
+	`, id)
+
+	var o model.Order
+	if err := row.Scan(&o.ID, &o.ProductID, &o.Quantity, &o.Status, &o.CreatedAt); err != nil {
+		return nil, err
+	}
+
+	return &o, nil
+}

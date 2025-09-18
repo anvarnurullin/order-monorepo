@@ -28,6 +28,22 @@ services:
     networks:
       - dev
 
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_SERVER_URL: http://localhost:9000
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - dev
+
   zookeeper:
     image: bitnami/zookeeper:3
     environment:
@@ -60,8 +76,13 @@ services:
     environment:
       DATABASE_URL: postgres://app:app@postgres:5432/app?sslmode=disable
       CATALOG_PORT: 8082
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      MINIO_BUCKET: product-images
     depends_on:
       - postgres
+      - minio
     ports:
       - "8082:8082"
     networks:
@@ -106,3 +127,4 @@ services:
 volumes:
   pgdata:
   redisdata:
+  miniodata:

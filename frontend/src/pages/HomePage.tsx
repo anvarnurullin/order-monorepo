@@ -1,8 +1,10 @@
 
+import './HomePage.scss';
+
 export default function HomePage() {
   return (
-    <div className="text-center py-8">
-      <h1 className="text-3xl font-bold mb-8">Система управления заказами</h1>
+    <div className="home-page">
+      <h1 className="home-page__title">Система управления заказами</h1>
     </div>
   );
 }

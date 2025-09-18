@@ -8,5 +8,6 @@ type Product struct {
 	SKU          string    `json:"sku"`
 	Price        float64   `json:"price"`
 	QtyAvailable int       `json:"qty_available"`
+	ImageURL     *string   `json:"image_url,omitempty"`
 	CreatedAt    time.Time `json:"created_at"`
 }
